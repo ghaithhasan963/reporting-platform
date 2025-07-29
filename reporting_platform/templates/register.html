@@ -1,28 +1,14 @@
-<!-- صفحة التسجيل -->
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>إنشاء حساب</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen">
 {% extends 'base.html' %}
-{% block title %}عنوان مخصص للصفحة{% endblock %}
+{% block title %}تسجيل مستخدم جديد{% endblock %}
 {% block content %}
-<!-- محتوى الصفحة الأصلي هون -->
+<div class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-12">
+  <h2 class="text-2xl font-bold mb-6 text-center">إنشاء حساب جديد</h2>
+  <form action="/register" method="post" class="space-y-4">
+    <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
+    <input type="text" name="phone" placeholder="رقم الهاتف" class="w-full p-2 border rounded" required>
+    <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
+    <input type="password" name="confirm" placeholder="تأكيد كلمة المرور" class="w-full p-2 border rounded" required>
+    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">سجل الآن</button>
+  </form>
+</div>
 {% endblock %}
-
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-6 text-center">إنشاء حساب جديد</h2>
-    <form action="/register" method="post" class="space-y-4">
-      <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
-      <input type="text" name="phone" placeholder="رقم الهاتف" class="w-full p-2 border rounded" required>
-      <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
-      <input type="password" name="confirm" placeholder="تأكيد كلمة المرور" class="w-full p-2 border rounded" required>
-      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">سجل الآن</button>
-    </form>
-  </div>
-
-</body>
-</html>
