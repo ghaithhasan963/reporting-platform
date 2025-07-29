@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}تسجيل الدخول{% endblock %}
 {% block content %}
-<div class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-12">
-  <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h2>
-  <form action="/login" method="post" class="space-y-4">
-    <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
-    <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">دخول</button>
-    <div class="text-center text-sm mt-4">ليس لديك حساب؟ <a href="/register" class="text-blue-600 hover:underline">سجل الآن</a></div>
+<div class="max-w-md mx-auto mt-24 bg-white p-8 rounded shadow">
+  <h2 class="text-2xl mb-4 font-bold text-center">تسجيل الدخول</h2>
+  <form method="POST">
+    <input name="username" class="input input-bordered w-full mb-3" placeholder="اسم المستخدم" required>
+    <input name="password" type="password" class="input input-bordered w-full mb-4" placeholder="كلمة المرور" required>
+    <button type="submit" class="btn btn-primary w-full">دخول</button>
   </form>
+  {% if error %}
+  <script>Swal.fire({icon:'error',text:'خطأ في تسجيل الدخول'})</script>
+  {% endif %}
+  {% if registered %}
+  <script>Swal.fire({icon:'success',text:'تم التسجيل بنجاح'})</script>
+  {% endif %}
 </div>
 {% endblock %}
