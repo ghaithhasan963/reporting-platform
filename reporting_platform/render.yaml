@@ -2,8 +2,9 @@ services:
   - type: web
     name: reporting-platform
     env: python
+    build:
+      pythonVersion: 3.11.8
     plan: free
-    buildCommand: pip install -r reporting_platform/requirements.txt
-    startCommand: python reporting_platform/app.py
-build:
-  pythonVersion: 3.11.8
+    branch: main
+    rootDir: reporting_platform
+    ...
