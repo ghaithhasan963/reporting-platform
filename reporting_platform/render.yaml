@@ -1,8 +1,7 @@
 services:
   - type: web
-    name: anti-sectarian-reports
+    name: reporting-platform
     env: python
     plan: free
-    buildCommand: ""
-    startCommand: python app.py
-    autoDeploy: true
+    buildCommand: pip install -r reporting_platform/requirements.txt
+    startCommand: python reporting_platform/app.py
