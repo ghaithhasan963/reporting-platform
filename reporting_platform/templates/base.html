@@ -2,21 +2,30 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>منصة البلاغات</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+  <title>{% block title %}منصة البلاغات{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="toast">{{ messages[0] }}</div>
-    {% endif %}
-  {% endwith %}
-  <nav>
-    <a href="{{ url_for('dashboard') }}">الرئيسية</a>
-    <a href="{{ url_for('submit_report') }}">رفع بلاغ</a>
-    <a href="{{ url_for('logout') }}">تسجيل الخروج</a>
+<body class="bg-gray-100 font-sans">
+
+  <!-- ✅ رأس الصفحة -->
+  <nav class="bg-white shadow p-4 flex justify-between">
+    <h1 class="text-xl font-bold">منصة البلاغات</h1>
+    <div>
+      <a href="/submit_report" class="mr-4 text-blue-600 hover:underline">رفع بلاغ</a>
+      <a href="/dashboard" class="mr-4 text-blue-600 hover:underline">لوحة التحكم</a>
+      <a href="/login" class="text-red-600 hover:underline">تسجيل الخروج</a>
+    </div>
   </nav>
-  {% block content %}{% endblock %}
+
+  <!-- 🔄 محتوى الصفحة -->
+  <main class="p-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- 👣 أسفل الصفحة -->
+  <footer class="bg-white shadow text-center py-4 mt-12">
+    <p class="text-sm text-gray-500">© غيث حسن 2025 - جميع الحقوق محفوظة</p>
+  </footer>
+
 </body>
 </html>
