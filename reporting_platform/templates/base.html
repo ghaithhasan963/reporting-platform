@@ -3,21 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>منصة البلاغات</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">📢 منصة مكافحة الفتن</a>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="toast">{{ messages[0] }}</div>
+    {% endif %}
+  {% endwith %}
+  <nav>
+    <a href="{{ url_for('dashboard') }}">الرئيسية</a>
+    <a href="{{ url_for('submit_report') }}">رفع بلاغ</a>
+    <a href="{{ url_for('logout') }}">تسجيل الخروج</a>
   </nav>
-  <div class="container mt-4">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for msg in messages %}
-          <div class="alert alert-info">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-  </div>
+  {% block content %}{% endblock %}
 </body>
 </html>
