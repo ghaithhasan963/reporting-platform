@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-blue-100 via-blue-300 to-blue-500 text-center">
-  <h1 class="text-4xl font-bold mb-4">منصة البلاغات لحماية المجتمع</h1>
-  <p class="text-lg mb-6 max-w-lg">ساهم في الإبلاغ عن المحتوى الضار... سجل بلاغك وساعدنا بحماية الإنترنت.</p>
+<div class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-900 via-indigo-700 to-purple-900 text-white text-center px-6">
+  <h1 class="text-5xl font-bold mb-6 animate__animated animate__fadeInDown">مرحبًا بك في منصة البلاغات 👮‍♂️</h1>
+  <p class="text-lg mb-8 animate__animated animate__fadeInUp max-w-2xl mx-auto">حماية الإنترنت تبدأ منك. أبلغ عن المحتوى الضار وساهم ببناء مجتمع رقمي آمن وعادل.</p>
   <div class="space-x-4">
-    <a href="/login" class="btn btn-primary">تسجيل الدخول</a>
-    <a href="/register" class="btn btn-secondary">إنشاء حساب</a>
+    <a href="/login" class="btn btn-accent btn-lg animate__animated animate__fadeIn">تسجيل الدخول</a>
+    <a href="/register" class="btn btn-outline btn-lg animate__animated animate__fadeIn">إنشاء حساب</a>
+  </div>
+  <div class="mt-12">
+    <img src="/static/hero.svg" alt="shield" class="w-64 mx-auto animate-bounce">
   </div>
 </div>
 {% endblock %}
