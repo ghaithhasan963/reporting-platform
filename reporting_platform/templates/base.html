@@ -2,23 +2,47 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}منصة البلاغات{% endblock %}</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- ✅ تصميم Tailwind ودعم DaisyUI -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@3.6.0/dist/full.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  <!-- ✅ تصميم Tailwind ودعم DaisyUI -->
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/daisyui@3.6.0/dist/full.css" rel="stylesheet" />
 
-<!-- ✅ إشعارات SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- ✅ إشعارات SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- ✅ حركات انيميشن -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
+  <!-- ✅ حركات انيميشن -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen">
-  {% block content %}{% endblock %}
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- ✅ رأس الصفحة -->
+  <header class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">💡 منصة البلاغات</h1>
+    <nav class="space-x-4">
+      <a href="{{ url_for('home') }}" class="btn btn-link">الرئيسية</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-link">لوحة التحكم</a>
+      <a href="{{ url_for('about') }}" class="btn btn-link">من نحن</a>
+      <a href="{{ url_for('policy') }}" class="btn btn-link">سياسة الاستخدام</a>
+      {% if 'user_id' in session %}
+        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">تسجيل الخروج</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-link">دخول</a>
+        <a href="{{ url_for('register') }}" class="btn btn-link">تسجيل</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- ✅ محتوى القالب الفرعي -->
+  <main class="flex-grow container mx-auto p-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ✅ تذييل الصفحة -->
+  <footer class="bg-white shadow text-center p-4">
+    <p>جميع الحقوق محفوظة © {{ current_year if current_year else 2025 }} | تصميم غيث</p>
+  </footer>
 </body>
 </html>
