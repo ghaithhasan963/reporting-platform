@@ -98,6 +98,9 @@ def delete(id):
 def logout():
     session.pop('user', None)
     return redirect('/login')
+@app.route('/')
+def home():
+    return redirect('/login')
 
 if __name__ == '__main__':
     with app.app_context():
