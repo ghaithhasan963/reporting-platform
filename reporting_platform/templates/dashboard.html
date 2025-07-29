@@ -1,25 +1,40 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>📋 بلاغات المستخدمين</h2>
-<p>🧮 عدد البلاغات: {{ reports|length }}</p>
+<!-- صفحة لوحة الأدمن -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
 
-<input type="text" id="search" placeholder="🔍 تصفية البلاغات" oninput="filterReports()" />
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">لوحة إدارة البلاغات</h1>
+    <table class="w-full table-auto bg-white shadow-md rounded-lg">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="p-2">المستخدم</th>
+          <th class="p-2">نوع البلاغ</th>
+          <th class="p-2">الوصف</th>
+          <th class="p-2">إجراء</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- يتم توليد البلاغات من خلال Jinja داخل Flask -->
+        {% for report in reports %}
+        <tr class="border-b">
+          <td class="p-2">{{ report.username }}</td>
+          <td class="p-2">{{ report.category }}</td>
+          <td class="p-2">{{ report.description }}</td>
+          <td class="p-2">
+            <a href="/accept/{{ report.id }}" class="text-green-600 hover:underline">قبول</a> /
+            <a href="/reject/{{ report.id }}" class="text-red-600 hover:underline">رفض</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-<div id="reportList">
-  {% for report in reports %}
-    <div class="report">
-      <strong>{{ report.user }}</strong>: {{ report.text }}
-    </div>
-  {% endfor %}
-</div>
-
-<script>
-  function filterReports() {
-    const keyword = document.getElementById("search").value.toLowerCase();
-    const reports = document.querySelectorAll(".report");
-    reports.forEach(div => {
-      div.style.display = div.textContent.toLowerCase().includes(keyword) ? "block" : "none";
-    });
-  }
-</script>
-{% endblock %}
+</body>
+</html>
