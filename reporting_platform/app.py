@@ -12,6 +12,7 @@ class User(db.Model):
     username = db.Column(db.String(50))
     phone = db.Column(db.String(15))
     password = db.Column(db.String(50))
+    role = db.Column(db.String(10), default='user')  # 🔒 صلاحيات
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +22,10 @@ class Report(db.Model):
     approved = db.Column(db.String(10), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+@app.route('/')
+def welcome():
+    return render_template('welcome.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -29,7 +34,11 @@ def login():
         user = User.query.filter_by(username=u, password=p).first()
         if user:
             session['user'] = u
-            return redirect('/dashboard')
+            session['role'] = user.role
+            if user.role == 'admin':
+                return redirect('/admin_dashboard')
+            else:
+                return redirect('/dashboard')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -40,7 +49,8 @@ def register():
         user = User(
             username=request.form['username'],
             phone=request.form['phone'],
-            password=request.form['password']
+            password=request.form['password'],
+            role='user'
         )
         db.session.add(user)
         db.session.commit()
@@ -59,47 +69,52 @@ def submit_report():
         )
         db.session.add(report)
         db.session.commit()
-        return redirect('/dashboard')
+        return render_template('submit_report.html', success=True)
     return render_template('submit_report.html')
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user' not in session:
+    if 'user' not in session or session.get('role') != 'user':
+        return redirect('/login')
+    reports = Report.query.filter_by(username=session['user']).all()
+    return render_template('dashboard.html', reports=reports)
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'user' not in session or session.get('role') != 'admin':
         return redirect('/login')
     status = request.args.get('status')
     if status:
         reports = Report.query.filter_by(approved=status).all()
     else:
         reports = Report.query.all()
-    return render_template('dashboard.html', reports=reports)
+    return render_template('admin_dashboard.html', reports=reports)
 
 @app.route('/accept/<int:id>')
 def accept(id):
     r = Report.query.get(id)
     r.approved = 'approved'
     db.session.commit()
-    return redirect('/dashboard')
+    return redirect('/admin_dashboard')
 
 @app.route('/reject/<int:id>')
 def reject(id):
     r = Report.query.get(id)
     r.approved = 'rejected'
     db.session.commit()
-    return redirect('/dashboard')
+    return redirect('/admin_dashboard')
 
 @app.route('/delete/<int:id>')
 def delete(id):
     r = Report.query.get(id)
     db.session.delete(r)
     db.session.commit()
-    return redirect('/dashboard')
+    return redirect('/admin_dashboard')
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
-    return redirect('/login')
-@app.route('/')
-def home():
+    session.pop('role', None)
     return redirect('/login')
 
 if __name__ == '__main__':
