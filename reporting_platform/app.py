@@ -1,65 +1,90 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash
-from auth import hash_password, verify_password
-from db_init import init_db, add_user, find_user, save_report, get_reports
-import os
+from flask import Flask, render_template, request, redirect, session
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"  # لتخزين الجلسات
+app.secret_key = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reports.db'
+db = SQLAlchemy(app)
 
-init_db()
+# 📦 تعريف نموذج المستخدم
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50))
+    phone = db.Column(db.String(15))
+    password = db.Column(db.String(50))
 
-@app.route("/")
-def index():
-    return render_template("base.html")
+# 🛡️ تعريف نموذج البلاغ
+class Report(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50))
+    category = db.Column(db.String(50))
+    description = db.Column(db.Text)
+    approved = db.Column(db.Boolean, default=False)
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = hash_password(request.form.get("password"))
-        add_user(username, password)
-        flash("✅ تم التسجيل بنجاح!")
-        return redirect(url_for("login"))
-    return render_template("register.html")
-
-@app.route("/login", methods=["GET", "POST"])
+# 📥 تسجيل الدخول
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        user = find_user(username)
-        if user and verify_password(password, user["password"]):
-            session["user"] = username
-            flash("✅ تم تسجيل الدخول!")
-            return redirect(url_for("dashboard"))
-        flash("❌ معلومات خاطئة")
-    return render_template("login.html")
+    if request.method == 'POST':
+        u = request.form['username']
+        p = request.form['password']
+        user = User.query.filter_by(username=u, password=p).first()
+        if user:
+            session['user'] = u
+            return redirect('/dashboard')
+        return 'بيانات خاطئة'
+    return render_template('login.html')
 
-@app.route("/dashboard")
-def dashboard():
-    if "user" not in session:
-        return redirect(url_for("login"))
-    user = session["user"]
-    reports = get_reports()
-    return render_template("dashboard.html", reports=reports, user=user)
+# 🧾 تسجيل مستخدم جديد
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        new_user = User(
+            username=request.form['username'],
+            phone=request.form['phone'],
+            password=request.form['password']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect('/login')
+    return render_template('register.html')
 
-@app.route("/submit", methods=["GET", "POST"])
+# 🚨 رفع بلاغ جديد
+@app.route('/submit_report', methods=['GET', 'POST'])
 def submit_report():
-    if "user" not in session:
-        return redirect(url_for("login"))
-    if request.method == "POST":
-        content = request.form.get("report")
-        save_report(content, session["user"])
-        flash("✅ تم إرسال البلاغ")
-        return redirect(url_for("dashboard"))
-    return render_template("submit_report.html")
+    if request.method == 'POST':
+        report = Report(
+            username=session.get('user'),
+            category=request.form['category'],
+            description=request.form['description']
+        )
+        db.session.add(report)
+        db.session.commit()
+        return redirect('/dashboard')
+    return render_template('submit_report.html')
 
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-    flash("🚪 تم تسجيل الخروج")
-    return redirect(url_for("login"))
+# 📋 لوحة الإدارة
+@app.route('/dashboard')
+def dashboard():
+    reports = Report.query.all()
+    return render_template('dashboard.html', reports=reports)
 
-if __name__ == "__main__":
+# ✅ قبول بلاغ
+@app.route('/accept/<int:id>')
+def accept(id):
+    r = Report.query.get(id)
+    r.approved = True
+    db.session.commit()
+    return redirect('/dashboard')
+
+# ❌ رفض بلاغ
+@app.route('/reject/<int:id>')
+def reject(id):
+    r = Report.query.get(id)
+    db.session.delete(r)
+    db.session.commit()
+    return redirect('/dashboard')
+
+# 🔚 تشغيل السيرفر
+if __name__ == '__main__':
+    db.create_all()
     app.run(host='0.0.0.0', port=10000, debug=True)
-
