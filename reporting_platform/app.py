@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
+from utils import calculate_trust_level
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -12,13 +13,16 @@ class User(db.Model):
     username = db.Column(db.String(50))
     phone = db.Column(db.String(15))
     password = db.Column(db.String(50))
-    role = db.Column(db.String(10), default='user')  # 🔒 صلاحيات
+    role = db.Column(db.String(10), default='user')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     category = db.Column(db.String(50))
     description = db.Column(db.Text)
+    link = db.Column(db.String(200))  # 🔗 رابط منفصل
+    report_type = db.Column(db.String(10), default='private')  # public/private
     approved = db.Column(db.String(10), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -35,37 +39,44 @@ def login():
         if user:
             session['user'] = u
             session['role'] = user.role
-            if user.role == 'admin':
-                return redirect('/admin_dashboard')
-            else:
-                return redirect('/dashboard')
+            return redirect('/dashboard' if user.role == 'user' else '/admin_dashboard')
+        return render_template('login.html', error=True)
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         if request.form['password'] != request.form['confirm']:
-            return 'كلمة المرور غير متطابقة'
+            return render_template('register.html', mismatch=True)
         user = User(
             username=request.form['username'],
             phone=request.form['phone'],
-            password=request.form['password'],
-            role='user'
+            password=request.form['password']
         )
         db.session.add(user)
         db.session.commit()
-        return redirect('/login')
+        return render_template('login.html', registered=True)
     return render_template('register.html')
 
 @app.route('/submit_report', methods=['GET', 'POST'])
 def submit_report():
-    if 'user' not in session:
+    if 'user' not in session or session.get('role') != 'user':
         return redirect('/login')
+    username = session['user']
+    last_report = Report.query.filter_by(username=username).order_by(Report.created_at.desc()).first()
+    wait = False
+    if last_report:
+        delta = datetime.utcnow() - last_report.created_at
+        wait = delta < timedelta(seconds=30)
     if request.method == 'POST':
+        if wait:
+            return render_template('submit_report.html', wait=True)
         report = Report(
-            username=session['user'],
+            username=username,
             category=request.form['category'],
-            description=request.form['description']
+            description=request.form['description'],
+            link=request.form['link'],
+            report_type=request.form['report_type']
         )
         db.session.add(report)
         db.session.commit()
@@ -77,21 +88,38 @@ def dashboard():
     if 'user' not in session or session.get('role') != 'user':
         return redirect('/login')
     reports = Report.query.filter_by(username=session['user']).all()
-    return render_template('dashboard.html', reports=reports)
+    verified_reports = len([r for r in reports if r.approved == 'approved'])
+    level = calculate_trust_level(verified_reports)
+    return render_template('dashboard.html', reports=reports, level=level)
+
+@app.route('/profile')
+def profile():
+    if 'user' not in session:
+        return redirect('/login')
+    user = User.query.filter_by(username=session['user']).first()
+    reports = Report.query.filter_by(username=session['user']).all()
+    verified_reports = len([r for r in reports if r.approved == 'approved'])
+    level = calculate_trust_level(verified_reports)
+    return render_template('profile.html', user=user, level=level, reports=len(reports))
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if 'user' not in session or session.get('role') != 'admin':
         return redirect('/login')
     status = request.args.get('status')
+    report_type = request.args.get('type')
+    query = Report.query
     if status:
-        reports = Report.query.filter_by(approved=status).all()
-    else:
-        reports = Report.query.all()
+        query = query.filter_by(approved=status)
+    if report_type:
+        query = query.filter_by(report_type=report_type)
+    reports = query.order_by(Report.created_at.desc()).all()
     return render_template('admin_dashboard.html', reports=reports)
 
 @app.route('/accept/<int:id>')
 def accept(id):
+    if session.get('role') != 'admin':
+        return redirect('/login')
     r = Report.query.get(id)
     r.approved = 'approved'
     db.session.commit()
@@ -99,6 +127,8 @@ def accept(id):
 
 @app.route('/reject/<int:id>')
 def reject(id):
+    if session.get('role') != 'admin':
+        return redirect('/login')
     r = Report.query.get(id)
     r.approved = 'rejected'
     db.session.commit()
@@ -106,6 +136,8 @@ def reject(id):
 
 @app.route('/delete/<int:id>')
 def delete(id):
+    if session.get('role') != 'admin':
+        return redirect('/login')
     r = Report.query.get(id)
     db.session.delete(r)
     db.session.commit()
