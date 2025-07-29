@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<h2>📝 تسجيل جديد</h2>
+<h2>📝 تسجيل مستخدم جديد</h2>
 <form method="POST">
-  <input name="username" class="form-control mb-2" placeholder="اسم المستخدم">
-  <input name="password" class="form-control mb-2" type="password" placeholder="كلمة المرور">
-  <button class="btn btn-primary" type="submit">تسجيل</button>
+  <input name="username" placeholder="اسم المستخدم" required><br>
+  <input name="password" type="password" placeholder="كلمة المرور" required><br>
+  <button type="submit">تسجيل</button>
 </form>
 {% endblock %}
