@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🔔 إرسال بلاغ جديد</h2>
+<form method="POST">
+  <textarea name="report" required placeholder="اكتب البلاغ هنا..." rows="5" cols="60"></textarea><br>
+  <button type="submit">إرسال</button>
+</form>
+{% endblock %}
