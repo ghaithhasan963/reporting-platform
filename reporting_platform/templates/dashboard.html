@@ -1,63 +1,23 @@
 {% extends 'base.html' %}
-{% block title %}لوحة التحكم{% endblock %}
 {% block content %}
-
-<div class="max-w-6xl mx-auto mt-8">
-  <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">لوحة إدارة البلاغات</h1>
-
-  <!-- ✅ خيارات الفلترة -->
-  <div class="mb-6 flex justify-between items-center">
-    <form method="get" class="flex space-x-4">
-      <select name="status" class="p-2 border rounded shadow-sm">
-        <option value="">عرض الكل</option>
-        <option value="pending">قيد المراجعة</option>
-        <option value="approved">مقبول</option>
-        <option value="rejected">مرفوض</option>
-      </select>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">تصفية</button>
-    </form>
-    <p class="text-sm text-gray-500">عدد البلاغات: {{ reports | length }}</p>
-  </div>
-
-  <!-- 📊 جدول البلاغات -->
-  <div class="overflow-x-auto">
-    <table class="w-full bg-white border rounded-lg shadow">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="p-3 text-right">المستخدم</th>
-          <th class="p-3 text-right">نوع البلاغ</th>
-          <th class="p-3 text-right">الوصف</th>
-          <th class="p-3 text-right">الحالة</th>
-          <th class="p-3 text-right">تاريخ الإرسال</th>
-          <th class="p-3 text-right">الإجراء</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for report in reports %}
-        <tr class="border-t text-right hover:bg-gray-50">
-          <td class="p-3 font-semibold">{{ report.username }}</td>
-          <td class="p-3">{{ report.category }}</td>
-          <td class="p-3 text-sm">{{ report.description }}</td>
-          <td class="p-3">
-            {% if report.approved == True %}
-              <span class="text-green-600 font-bold">مقبول</span>
-            {% elif report.approved == False %}
-              <span class="text-yellow-500 font-bold">قيد المراجعة</span>
-            {% else %}
-              <span class="text-red-600 font-bold">مرفوض</span>
-            {% endif %}
-          </td>
-          <td class="p-3 text-sm">{{ report.created_at.strftime('%Y-%m-%d') }}</td>
-          <td class="p-3 space-x-2">
-            <a href="/accept/{{ report.id }}" class="text-green-600 hover:underline">قبول</a>
-            <a href="/reject/{{ report.id }}" class="text-red-600 hover:underline">رفض</a>
-            <a href="/delete/{{ report.id }}" class="text-gray-500 hover:underline">حذف</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<div class="max-w-4xl mx-auto mt-8">
+  <h2 class="text-2xl font-bold mb-2 text-center">بلاغاتي الشخصية</h2>
+  <p class="text-center mb-4">مستواك: {{ level }}</p>
+  <table class="table w-full bg-white rounded shadow">
+    <thead>
+      <tr><th>#</th><th>الوصف</th><th>الرابط</th><th>الحالة</th><th>تاريخ</th></tr>
+    </thead>
+    <tbody>
+      {% for r in reports %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.category }}</td>
+        <td><a href="{{ r.link }}" class="link">{{ r.link[:30] }}...</a></td>
+        <td>{{ r.approved }}</td>
+        <td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-
 {% endblock %}
