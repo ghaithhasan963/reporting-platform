@@ -1,7 +1,7 @@
-import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    return generate_password_hash(password)
 
-def check_password(stored_hash, user_input):
-    return stored_hash == hash_password(user_input)
+def verify_password(input_password, stored_hash):
+    return check_password_hash(stored_hash, input_password)
