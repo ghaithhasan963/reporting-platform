@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}تسجيل مستخدم جديد{% endblock %}
 {% block content %}
-<div class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-12">
-  <h2 class="text-2xl font-bold mb-6 text-center">إنشاء حساب جديد</h2>
-  <form action="/register" method="post" class="space-y-4">
-    <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
-    <input type="text" name="phone" placeholder="رقم الهاتف" class="w-full p-2 border rounded" required>
-    <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
-    <input type="password" name="confirm" placeholder="تأكيد كلمة المرور" class="w-full p-2 border rounded" required>
-    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">سجل الآن</button>
+<div class="max-w-md mx-auto mt-24 bg-white p-8 rounded shadow">
+  <h2 class="text-2xl mb-4 font-bold text-center">إنشاء حساب جديد</h2>
+  <form method="POST">
+    <input name="username" class="input input-bordered w-full mb-3" placeholder="اسم المستخدم" required>
+    <input name="phone" class="input input-bordered w-full mb-3" placeholder="رقم الهاتف" required>
+    <input name="password" type="password" class="input input-bordered w-full mb-3" placeholder="كلمة المرور" required>
+    <input name="confirm" type="password" class="input input-bordered w-full mb-4" placeholder="تأكيد كلمة المرور" required>
+    <button type="submit" class="btn btn-primary w-full">تسجيل</button>
   </form>
+  {% if mismatch %}
+  <script>Swal.fire({icon:'error',text:'كلمة المرور غير متطابقة'})</script>
+  {% endif %}
 </div>
 {% endblock %}
