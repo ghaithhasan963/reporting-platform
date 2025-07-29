@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: reporting-platform-new
+    env: python
+    plan: free
+    branch: main
+    rootDir: reporting_platform
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    build:
+      pythonVersion: 3.11.8
