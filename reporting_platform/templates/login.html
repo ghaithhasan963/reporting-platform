@@ -1,10 +1,22 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>👤 تسجيل الدخول</h2>
-<form method="POST">
-  <input name="username" placeholder="اسم المستخدم" required><br>
-  <input name="password" type="password" placeholder="كلمة المرور" required><br>
-  <button type="submit">دخول</button>
-</form>
-<p>ليس لديك حساب؟ <a href="{{ url_for('register') }}">أنشئ حساباً</a></p>
-{% endblock %}
+<!-- صفحة تسجيل دخول -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h2>
+    <form action="/login" method="post" class="space-y-4">
+      <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
+      <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">دخول</button>
+      <div class="text-center text-sm mt-4">ليس لديك حساب؟ <a href="/register" class="text-blue-600">سجل الآن</a></div>
+    </form>
+  </div>
+
+</body>
+</html>
