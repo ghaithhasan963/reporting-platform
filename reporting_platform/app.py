@@ -8,28 +8,31 @@ app.secret_key = "super-secret-key"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
 
-# 👥 نموذج المستخدم
+# 👤 نموذج المستخدم
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(200))
 
-# 📄 نموذج البلاغات (يمكن تطويره لاحقًا أكثر)
+# 📝 نموذج البلاغ
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+# 📅 تمرير السنة إلى القوالب
 @app.context_processor
 def inject_year():
     return {"current_year": datetime.datetime.now().year}
 
+# 🏠 الصفحة الرئيسية
 @app.route("/")
 def home():
     return render_template("welcome.html")
 
+# 🔐 تسجيل الحساب
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -49,6 +52,7 @@ def register():
         return redirect(url_for("dashboard"))
     return render_template("register.html")
 
+# 🔓 تسجيل الدخول
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -61,17 +65,20 @@ def login():
         return "بيانات الدخول غير صحيحة", 401
     return render_template("login.html")
 
+# 🚪 تسجيل الخروج
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
 
+# 🧭 لوحة التحكم
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
     return render_template("dashboard.html")
 
+# 📤 رفع بلاغ
 @app.route("/submit_report", methods=["GET", "POST"])
 def submit_report():
     if "user_id" not in session:
@@ -84,14 +91,17 @@ def submit_report():
         return redirect(url_for("dashboard"))
     return render_template("submit_report.html")
 
+# ℹ️ صفحة "من نحن"
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+# ⚖️ صفحة "سياسة الاستخدام"
 @app.route("/policy")
 def policy():
     return render_template("policy.html")
 
+# 🚀 تشغيل السيرفر
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
