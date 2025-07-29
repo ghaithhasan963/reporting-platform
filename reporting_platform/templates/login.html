@@ -1,27 +1,13 @@
-<!-- صفحة تسجيل دخول -->
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>تسجيل الدخول</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 {% extends 'base.html' %}
-{% block title %}عنوان مخصص للصفحة{% endblock %}
+{% block title %}تسجيل الدخول{% endblock %}
 {% block content %}
-<!-- محتوى الصفحة الأصلي هون -->
+<div class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto mt-12">
+  <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h2>
+  <form action="/login" method="post" class="space-y-4">
+    <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
+    <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
+    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">دخول</button>
+    <div class="text-center text-sm mt-4">ليس لديك حساب؟ <a href="/register" class="text-blue-600 hover:underline">سجل الآن</a></div>
+  </form>
+</div>
 {% endblock %}
-
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h2>
-    <form action="/login" method="post" class="space-y-4">
-      <input type="text" name="username" placeholder="اسم المستخدم" class="w-full p-2 border rounded" required>
-      <input type="password" name="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
-      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">دخول</button>
-      <div class="text-center text-sm mt-4">ليس لديك حساب؟ <a href="/register" class="text-blue-600">سجل الآن</a></div>
-    </form>
-  </div>
-
-</body>
-</html>
