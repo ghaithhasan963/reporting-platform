@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-xl mx-auto mt-16 bg-white p-8 rounded shadow">
+  <h2 class="text-3xl font-bold mb-6 text-center">إعدادات الحساب</h2>
+  <form method="POST">
+    <input name="phone" class="input input-bordered w-full mb-4" placeholder="رقم الهاتف الجديد" required>
+    <input name="password" type="password" class="input input-bordered w-full mb-4" placeholder="كلمة مرور جديدة">
+    <button type="submit" class="btn btn-primary w-full">تحديث البيانات</button>
+  </form>
+  {% if updated %}
+  <script>Swal.fire({icon:'success',text:'تم تحديث البيانات بنجاح'})</script>
+  {% endif %}
+</div>
+{% endblock %}
