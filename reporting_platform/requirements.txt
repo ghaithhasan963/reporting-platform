@@ -1,2 +1,2 @@
 Flask==2.3.2
-pytesseract==0.3.10
+Werkzeug==2.3.7
