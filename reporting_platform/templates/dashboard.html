@@ -1,40 +1,30 @@
-<!-- صفحة لوحة الأدمن -->
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>لوحة التحكم</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 p-8">
-
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">لوحة إدارة البلاغات</h1>
-    <table class="w-full table-auto bg-white shadow-md rounded-lg">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="p-2">المستخدم</th>
-          <th class="p-2">نوع البلاغ</th>
-          <th class="p-2">الوصف</th>
-          <th class="p-2">إجراء</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- يتم توليد البلاغات من خلال Jinja داخل Flask -->
-        {% for report in reports %}
-        <tr class="border-b">
-          <td class="p-2">{{ report.username }}</td>
-          <td class="p-2">{{ report.category }}</td>
-          <td class="p-2">{{ report.description }}</td>
-          <td class="p-2">
-            <a href="/accept/{{ report.id }}" class="text-green-600 hover:underline">قبول</a> /
-            <a href="/reject/{{ report.id }}" class="text-red-600 hover:underline">رفض</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}لوحة التحكم{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8">
+  <h1 class="text-2xl font-bold mb-6">لوحة إدارة البلاغات</h1>
+  <table class="w-full table-auto bg-white shadow-md rounded-lg">
+    <thead class="bg-gray-200 text-right">
+      <tr>
+        <th class="p-2">المستخدم</th>
+        <th class="p-2">نوع البلاغ</th>
+        <th class="p-2">الوصف</th>
+        <th class="p-2">الإجراء</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+      <tr class="border-b text-right">
+        <td class="p-2">{{ report.username }}</td>
+        <td class="p-2">{{ report.category }}</td>
+        <td class="p-2">{{ report.description }}</td>
+        <td class="p-2">
+          <a href="/accept/{{ report.id }}" class="text-green-600 hover:underline">قبول</a> /
+          <a href="/reject/{{ report.id }}" class="text-red-600 hover:underline">رفض</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
