@@ -1,8 +1,27 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>🔔 إرسال بلاغ جديد</h2>
-<form method="POST">
-  <textarea name="report" required placeholder="اكتب البلاغ هنا..." rows="5" cols="60"></textarea><br>
-  <button type="submit">إرسال</button>
-</form>
-{% endblock %}
+<!-- صفحة رفع بلاغ -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>رفع بلاغ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen p-8">
+
+  <div class="max-w-2xl mx-auto bg-gray-100 p-6 rounded-lg shadow">
+    <h2 class="text-xl font-bold mb-4">إرسال بلاغ جديد</h2>
+    <form action="/submit_report" method="post" class="space-y-4">
+      <input type="text" name="title" placeholder="عنوان البلاغ" class="w-full p-2 border rounded" required>
+      <textarea name="description" placeholder="وصف البلاغ" rows="5" class="w-full p-2 border rounded" required></textarea>
+      <select name="category" class="w-full p-2 border rounded" required>
+        <option value="">اختر نوع البلاغ</option>
+        <option value="محتوى مسيء">محتوى مسيء</option>
+        <option value="تحرش">تحرش</option>
+        <option value="احتيال">احتيال</option>
+      </select>
+      <button type="submit" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">إرسال البلاغ</button>
+    </form>
+  </div>
+
+</body>
+</html>
