@@ -1,46 +1,0 @@
-{% extends 'base.html' %}
-{% block title %}رفع بلاغ جديد | SaveNet{% endblock %}
-{% block content %}
-
-<div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-lg animate__animated animate__fadeInUp">
-  <h2 class="text-3xl font-bold text-center text-pink-600 mb-6">📤 رفع بلاغ جديد</h2>
-
-  {% if success %}
-    <script>
-      Swal.fire('✔️ تم الإرسال!', 'شكراً لمساهمتك في حماية المجتمع', 'success');
-    </script>
-  {% endif %}
-
-  <form method="POST" class="space-y-4">
-    <div>
-      <label class="block font-bold text-gray-700 mb-1">📑 الفئة</label>
-      <input type="text" name="category" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-indigo-400">
-    </div>
-
-    <div>
-      <label class="block font-bold text-gray-700 mb-1">📄 الوصف</label>
-      <textarea name="description" rows="4" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-pink-400"></textarea>
-    </div>
-
-    <div>
-      <label class="block font-bold text-gray-700 mb-1">🔗 رابط المحتوى</label>
-      <input type="url" name="link" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-purple-400">
-    </div>
-
-    <div>
-      <label class="block font-bold text-gray-700 mb-1">🔒 نوع البلاغ</label>
-      <select name="report_type" class="w-full border rounded px-3 py-2 focus:ring focus:ring-indigo-300">
-        <option value="private">خاص</option>
-        <option value="public">عام</option>
-      </select>
-    </div>
-
-    <div class="text-center mt-6">
-      <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition transform hover:scale-105">
-        🚀 إرسال البلاغ
-      </button>
-    </div>
-  </form>
-</div>
-
-{% endblock %}

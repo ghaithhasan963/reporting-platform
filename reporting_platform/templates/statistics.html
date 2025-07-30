@@ -1,12 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<h2 class="text-center">📊 لوحة الإحصائيات</h2>
-<div class="stats-box">
-  <p>✅ بلاغات مقبولة: {{ approved_count }}</p>
-  <p>⏳ بلاغات معلقة: {{ pending_count }}</p>
-  <p>❌ بلاغات مرفوضة: {{ rejected_count }}</p>
-</div>
-
-<a href="/export_excel" class="btn btn-outline-success">📥 تصدير إلى Excel</a>
-<a href="/export_pdf" class="btn btn-outline-danger">🧾 تصدير إلى PDF</a>
-{% endblock %}

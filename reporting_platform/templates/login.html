@@ -1,12 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<h2 class="text-center">🔐 تسجيل الدخول</h2>
-<form method="POST">
-  <input type="text" name="username" placeholder="اسم المستخدم" class="form-control" required><br>
-  <input type="password" name="password" placeholder="كلمة المرور" class="form-control" required><br>
-  <button type="submit" class="btn btn-primary">دخول</button>
-</form>
-{% if error %}
-  <div class="alert alert-danger mt-3">⚠️ اسم المستخدم أو كلمة المرور غير صحيحة</div>
-{% endif %}
-{% endblock %}
