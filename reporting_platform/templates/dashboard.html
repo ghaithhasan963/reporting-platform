@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
+{% block title %}لوحة المستخدم | SaveNet{% endblock %}
 {% block content %}
-<div class="max-w-4xl mx-auto mt-8">
-  <h2 class="text-2xl font-bold mb-2 text-center">بلاغاتي الشخصية</h2>
-  <p class="text-center mb-4">مستواك: {{ level }}</p>
-  <table class="table w-full bg-white rounded shadow">
-    <thead>
-      <tr><th>#</th><th>الوصف</th><th>الرابط</th><th>الحالة</th><th>تاريخ</th></tr>
-    </thead>
-    <tbody>
-      {% for r in reports %}
-      <tr>
-        <td>{{ r.id }}</td>
-        <td>{{ r.category }}</td>
-        <td><a href="{{ r.link }}" class="link">{{ r.link[:30] }}...</a></td>
-        <td>{{ r.approved }}</td>
-        <td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<h2 class="text-3xl font-bold text-center text-indigo-800 mb-8 animate__animated animate__fadeIn">📁 بلاغاتي الشخصية</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate__animated animate__fadeInUp animate__delay-1s">
+  {% for r in reports %}
+    <div class="bg-white shadow-md p-4 rounded-lg border-l-4 {% if r.approved == 'approved' %}border-green-500{% elif r.approved == 'rejected' %}border-red-500{% else %}border-yellow-400{% endif %} transform hover:scale-105 transition">
+      <h3 class="text-xl font-semibold text-indigo-700">{{ r.category }}</h3>
+      <p class="text-sm text-gray-600 mt-2">{{ r.description }}</p>
+      <div class="flex justify-between mt-3 text-sm">
+        <span>📅 {{ r.created_at.strftime('%Y-%m-%d') }}</span>
+        <span>
+          {% if r.approved == 'approved' %}✅ مقبولة{% elif r.approved == 'rejected' %}❌ مرفوضة{% else %}🕒 قيد المراجعة{% endif %}
+        </span>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-center text-gray-500">لا توجد بلاغات حتى الآن.</p>
+  {% endfor %}
 </div>
+
 {% endblock %}
