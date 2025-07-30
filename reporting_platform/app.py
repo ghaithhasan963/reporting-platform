@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
-from report_analytics import get_reports_per_day, get_reports_by_location
+from .report_analytics import get_reports_per_day, get_reports_by_location
 from activity import record_action
 from alerts import is_nearby
 from comments import add_comment, get_comments
