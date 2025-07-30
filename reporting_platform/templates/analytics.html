@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">📈 تحليلات البلاغات</h2>
+<canvas id="reportsChart" width="600" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('reportsChart').getContext('2d');
+  const reportsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ labels | safe }},
+      datasets: [{
+        label: 'عدد البلاغات / اليوم',
+        data: {{ counts | safe }},
+        borderColor: '#4caf50',
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}
