@@ -1,29 +1,17 @@
-{% extends 'base.html' %}
-{% block title %}البلاغات العامة | SaveNet{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-
-<div class="text-center mb-10 animate__animated animate__fadeInDown">
-  <h2 class="text-4xl font-extrabold text-indigo-700 mb-2">📣 البلاغات المنشورة</h2>
-  <p class="text-gray-600 text-lg">
-    ساهمت المنصة في حذف <span class="text-pink-600 font-bold">{{ removed_posts }}</span> منشور و
-    <span class="text-purple-600 font-bold">{{ removed_pages }}</span> صفحة ضارة 💥
-  </p>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate__animated animate__fadeInUp animate__delay-1s">
+<h2 class="text-center">📢 البلاغات العامة</h2>
+<div class="report-list">
   {% for r in reports %}
-    <div class="card bg-white shadow-lg p-5 rounded-xl border-t-4 border-indigo-500 transform transition hover:scale-105 hover:shadow-xl hover:border-pink-500">
-      <h3 class="text-xl font-bold text-indigo-800">{{ r.category }}</h3>
-      <p class="text-sm text-gray-600 mt-2">{{ r.description }}</p>
-      <a href="{{ r.link }}" target="_blank" class="text-blue-600 underline block mt-2">رابط المحتوى</a>
-      <div class="mt-3 flex justify-between items-center text-sm text-gray-500">
-        <span>🔒 نوع: {{ r.report_type }}</span>
-        <span>🕒 {{ r.created_at.strftime('%Y-%m-%d') }}</span>
-      </div>
-    </div>
-  {% else %}
-    <p class="col-span-3 text-center text-gray-500">لا توجد بلاغات منشورة حالياً.</p>
+  <div class="report-card" data-rating="{{ 'high' if r.rating >= 5 else 'low' }}">
+    <h4>{{ r.category }}</h4>
+    <p>{{ r.description }}</p>
+    <a href="{{ r.link }}" target="_blank">📎 رابط البلاغ</a><br>
+    <small>تم رفعه بواسطة: {{ r.username }} في {{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</small><br>
+    👍 التقييم: {{ r.rating }}
+    <a href="/rate/{{ r.id }}" class="btn btn-sm btn-outline-primary">تقييم</a>
+    💬 <a href="/comment/{{ r.id }}" class="btn btn-sm btn-outline-secondary">تعليق</a>
+  </div>
   {% endfor %}
 </div>
-
 {% endblock %}
