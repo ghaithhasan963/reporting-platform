@@ -1,4 +1,4 @@
-from reporting_platform.app import db, Comment
+from app import db, Comment
 from datetime import datetime
 
 def add_comment(report_id, username, text):
