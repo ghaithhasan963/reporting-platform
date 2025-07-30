@@ -1,0 +1,8 @@
+.level-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.level-novice { background-color: #ccc; color: #333; }
+.level-active { background-color: #4caf50; color: white; }
+.level-expert { background-color: #ff5722; color: white; }
