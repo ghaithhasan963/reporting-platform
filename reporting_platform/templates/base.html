@@ -26,7 +26,11 @@
       {% if session.get('role') == 'user' %}
         <a href="{{ url_for('submit_report') }}" class="btn btn-link">رفع بلاغ</a>
         <a href="{{ url_for('profile') }}" class="btn btn-link">ملفي</a>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-link">لوحتي</a>
+        {% if user.is_admin %}
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-link">لوحة الإدارة</a>
+{% else %}
+  <a href="{{ url_for('user_dashboard') }}" class="btn btn-link">لوحة المستخدم</a>
+{% endif %}
         <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">خروج</a>
       {% elif session.get('role') == 'admin' %}
         <a href="{{ url_for('admin_dashboard') }}" class="btn btn-link text-blue-800">لوحة الأدمن</a>
