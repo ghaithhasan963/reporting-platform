@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">سجل نشاطك</h2>
+<ul class="space-y-3">
+  {% for log in user.activity %}
+    <li class="p-2 bg-white rounded shadow border">{{ log.timestamp }} – {{ log.message }}</li>
+  {% else %}
+    <li>لا توجد أنشطة مسجّلة حالياً.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

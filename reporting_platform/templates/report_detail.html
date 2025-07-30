@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">تفاصيل البلاغ</h2>
+<p><strong>المُبلِّغ:</strong> {{ report.reporter_name }}</p>
+<p><strong>العنوان:</strong> {{ report.title }}</p>
+<p><strong>الوصف:</strong> {{ report.description }}</p>
+<p><strong>الموقع:</strong> {{ report.location }}</p>
+<p><strong>الحالة:</strong> {{ report.status }}</p>
+
+{% if report.image_url %}
+  <h3 class="mt-4 font-semibold">الصورة المرفقة:</h3>
+  <img src="{{ report.image_url }}" alt="صورة البلاغ" class="w-full max-w-md rounded shadow">
+{% endif %}
+{% endblock %}

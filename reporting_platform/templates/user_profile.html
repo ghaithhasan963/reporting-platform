@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">الملف الشخصي</h2>
+<p><strong>اسم المستخدم:</strong> {{ user.username }}</p>
+<p><strong>الرتبة:</strong> {{ user.rank }}</p>
+
+<h3 class="mt-4 font-semibold">مكافآتك:</h3>
+<ul>
+  {% for r in user.rewards %}
+    <li>{{ r.achievement }} | نقاط: {{ r.points }} | تقييم المجتمع: ⭐ {{ r.community_score }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

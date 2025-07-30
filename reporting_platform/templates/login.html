@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="text-xl font-bold text-gray-700 mb-6">🔑 تسجيل الدخول</h2>
+
+<form method="POST" action="/login" class="bg-white p-6 rounded-lg shadow-lg w-full md:w-2/3 mx-auto transform transition hover:scale-101 animate-fadein">
+  <div class="mb-4">
+    <label for="username" class="block text-sm font-medium text-gray-600">اسم المستخدم</label>
+    <input type="text" name="username" id="username" required
+      class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-indigo-400 transition focus:bg-indigo-100">
+  </div>
+
+  <div class="mb-4">
+    <label for="password" class="block text-sm font-medium text-gray-600">كلمة المرور</label>
+    <input type="password" name="password" id="password" required
+      class="mt-1 block w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-purple-400 transition focus:bg-purple-100">
+  </div>
+
+  <button type="submit"
+    class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white px-6 py-2 rounded shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl">
+    دخول 🚪
+  </button>
+</form>
+
+<script>
+  const loginForm = document.querySelector("form");
+  loginForm.addEventListener("submit", () => {
+    const audio = new Audio("https://cdn.freesound.org/previews/178/178186_3879076-lq.mp3");
+    audio.play();
+  });
+</script>
+
+{% endblock %}

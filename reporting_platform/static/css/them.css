@@ -1,0 +1,46 @@
+/* ------- عناصر دخول ناعمة ------- */
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadein {
+  animation: fadein 0.6s ease-out;
+}
+
+/* ------- تأثيرات Hover للبطاقات ------- */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* ------- أزرار ديناميكية ------- */
+.btn-glow {
+  background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.btn-glow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* ------- إدخال تفاعلي ------- */
+input:focus, textarea:focus, select:focus {
+  background-color: rgba(99,102,241,0.1);
+  box-shadow: 0 0 8px rgba(99,102,241,0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+/* ------- Footer ناعم ------- */
+.footer-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 2rem;
+}

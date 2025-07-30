@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4 text-indigo-700">📋 لوحة إدارة المستخدمين</h2>
+<table class="w-full border text-sm">
+  <thead>
+    <tr class="bg-indigo-100">
+      <th class="p-2">اسم المستخدم</th>
+      <th class="p-2">رقم الهاتف</th>
+      <th class="p-2">الرتبة</th>
+      <th class="p-2">التحكم</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr class="border-b">
+      <td class="p-2">{{ user.username }}</td>
+      <td class="p-2">{{ user.phone }}</td>
+      <td class="p-2">{{ user.role }}</td>
+      <td class="p-2 flex flex-wrap gap-2">
+        <form method="POST" action="/admin/update_role">
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+          <select name="role" class="border rounded px-2 py-1 text-xs">
+            <option value="زائر">زائر</option>
+            <option value="مدقق">مدقق</option>
+            <option value="مشرف">مشرف</option>
+            <option value="معلّق">معلّق</option>
+          </select>
+          <button type="submit" class="text-green-700 hover:underline text-xs">تحديث</button>
+        </form>
+        <form method="POST" action="/admin/delete_user" onsubmit="return confirm('هل تريد حذف هذا المستخدم؟')">
+          <input type="hidden" name="user_id" value="{{ user.id }}">
+          <button type="submit" class="text-red-600 hover:underline text-xs">حذف</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="text-center mb-10">
+  <h2 class="text-3xl font-bold text-indigo-700 mb-4 animate-fadein">🌐 منصة SaveNet الرقمية</h2>
+  <p class="text-gray-700 text-lg max-w-xl mx-auto animate-fadein">
+    بلغنا بأي حالة تحتاج تدخل فوري. هدفنا حماية المجتمع من أي خطر رقمي أو ميداني عبر التكنولوجيا التفاعلية.
+  </p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadein">
+  <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
+    <h3 class="text-xl font-semibold text-indigo-600 mb-2">🔐 البلاغات الفورية</h3>
+    <p class="text-sm text-gray-600 mb-4">
+      أرسل بلاغ عن حالة اختراق، تهديد، تحرش رقمي أو ميداني، وساهم بحماية المجتمع.
+    </p>
+    <a href="/report" class="btn-glow">قدّم بلاغ الآن 🚨</a>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow-lg card-hover">
+    <h3 class="text-xl font-semibold text-purple-600 mb-2">📊 مراقبة الحالات</h3>
+    <p class="text-sm text-gray-600 mb-4">
+      تابع آخر البلاغات المرسلة، والأنواع الأكثر تداولاً، وكل جديد يخص السلامة المجتمعية.
+    </p>
+    <a href="/admin" class="btn-glow">لوحة التحكم 🎛️</a>
+  </div>
+</div>
+
+<div class="mt-10 text-center animate-fadein">
+  <p class="text-gray-600 text-sm">SaveNet © - منصة البلاغات الذكية لأمان الجميع</p>
+</div>
+
+{% endblock %}
