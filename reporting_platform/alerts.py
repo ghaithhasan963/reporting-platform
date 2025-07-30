@@ -1,5 +1,5 @@
 from math import radians, cos, sin, asin, sqrt
-
+from app import Report
 def is_nearby(lat1, lon1, lat2, lon2, radius_km=2.0):
     # دالة لحساب المسافة بين نقطتين
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
