@@ -1,5 +1,5 @@
 from reporting_platform import db
-from reporting_platform.app import Log
+from app import Log
 from datetime import datetime
 
 def record_action(username, action):
