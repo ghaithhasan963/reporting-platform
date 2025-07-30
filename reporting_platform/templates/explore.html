@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}البلاغات العامة | SaveNet{% endblock %}
+{% block content %}
+
+<h2 class="text-3xl font-bold mb-6 text-center text-indigo-800">📣 البلاغات المنشورة للعامة</h2>
+
+<!-- ✅ عرض البلاغات المقبولة -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for r in reports %}
+    <div class="card shadow-md bg-white p-4 border-t-4 border-blue-400">
+      <h3 class="text-lg font-bold text-gray-800">{{ r.category }}</h3>
+      <p class="text-sm text-gray-600 mt-1">{{ r.description }}</p>
+      <a href="{{ r.link }}" target="_blank" class="text-blue-600 underline mt-2 block">رابط المحتوى</a>
+      <div class="mt-3 flex justify-between items-center">
+        <span class="text-xs text-gray-500">نشر بواسطة: {{ r.username }}</span>
+        <button class="btn btn-outline btn-sm text-xs">📤 أبلغ عن هذا أيضاً</button>
+      </div>
+    </div>
+  {% else %}
+    <p>لا توجد بلاغات منشورة حالياً.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
