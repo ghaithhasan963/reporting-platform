@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}خريطة التنبيهات | SaveNet{% endblock %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto p-6">
+  <h2 class="text-3xl font-bold text-center text-indigo-800 mb-6">🧭 خريطة التنبيهات المجتمعية</h2>
+  <div id="map" class="w-full h-[600px] rounded-lg shadow-lg"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+
+<script>
+  const map = L.map('map').setView([33.5138, 36.2765], 12); // تموضع دمشق
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '© OpenStreetMap',
+  }).addTo(map);
+
+  const reports = {{ reports|tojson }};
+  reports.forEach(r => {
+    if (r.latitude && r.longitude) {
+      L.marker([r.latitude, r.longitude])
+        .addTo(map)
+        .bindPopup(`
+          <strong>📌 التصنيف:</strong> ${r.category}<br>
+          <strong>📅 التاريخ:</strong> ${r.created_at}<br>
+          <strong>🔔 الحالة:</strong> ${r.approved === 'approved' ? '✅ مقبولة' : r.approved === 'rejected' ? '❌ مرفوضة' : '🕒 قيد المراجعة'}
+        `);
+    }
+  });
+</script>
+
+{% endblock %}
