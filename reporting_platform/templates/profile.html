@@ -1,27 +1,18 @@
-{% extends 'base.html' %}
-{% block title %}إنشاء حساب | SaveNet{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-
-<div class="max-w-md mx-auto mt-16 bg-white p-6 rounded-2xl shadow-md animate__animated animate__fadeInUp">
-  <h2 class="text-3xl font-bold text-center text-pink-600 mb-6">📝 إنشاء حساب جديد</h2>
-
-  {% if error %}
-    <script>
-      Swal.fire('❌ خطأ!', '{{ error }}', 'error');
-    </script>
-  {% endif %}
-
-  <form method="POST" class="space-y-4">
-    <input type="text" name="username" placeholder="📛 اسم المستخدم" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-purple-300">
-    <input type="password" name="password" placeholder="🔑 كلمة المرور" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-indigo-300">
-    <input type="password" name="confirm_password" placeholder="🔁 تأكيد كلمة المرور" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-pink-400">
-
-    <div class="text-center mt-6">
-      <button type="submit" class="bg-pink-600 text-white px-5 py-2 rounded-lg hover:bg-pink-700 transition transform hover:scale-105">
-        ✨ تسجيل
-      </button>
-    </div>
-  </form>
+<h2 class="text-center">👤 ملفي</h2>
+<div class="profile-info">
+  <p>الاسم: {{ user.username }}</p>
+  <p>📞 الهاتف: {{ user.phone }}</p>
+  <p>🔐 الدور: {{ user.role }}</p>
+  <p>🎖️ النقاط: {{ user.score }}</p>
+  <p>🚀 الرتبة: <span class="level-badge {{ 'level-expert' if level=='خبير 🔥' else 'level-active' if level=='نشط 💪' else 'level-novice' }}">{{ level }}</span></p>
 </div>
 
+<h3>📂 بلاغاتي</h3>
+<ul>
+  {% for r in reports %}
+  <li>{{ r.category }} - {{ r.created_at.strftime('%Y-%m-%d') }} - الحالة: {{ r.approved }}</li>
+  {% endfor %}
+</ul>
 {% endblock %}
