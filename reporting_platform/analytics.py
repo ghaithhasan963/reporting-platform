@@ -1,4 +1,4 @@
-from reporting_platform.app import Report
+from app import Report
 from sqlalchemy import func
 from reporting_platform import db
 
