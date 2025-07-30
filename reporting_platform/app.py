@@ -8,7 +8,6 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 
-# Render يستخدم DATABASE_URL تلقائيًا في البيئة
 db_uri = os.environ.get("DATABASE_URL", "sqlite:///savenet.db")
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -30,11 +29,6 @@ class Report(db.Model):
     date = db.Column(db.String(20))
 
 last_report_time = time.time()
-
-# إنشاء الجداول عند بدء التشغيل
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 @app.route('/')
 def home():
@@ -135,6 +129,9 @@ def check_new_reports():
     is_new = (time.time() - last_report_time) < 35
     return jsonify({"new_reports": is_new})
 
-# تشغيل التطبيق
+# 🚨 تهيئة قاعدة البيانات (بديل before_first_request)
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
