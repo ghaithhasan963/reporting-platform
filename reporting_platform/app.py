@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -14,7 +14,7 @@ class User(db.Model):
     username = db.Column(db.String(50))
     phone = db.Column(db.String(15))
     password = db.Column(db.String(50))
-    role = db.Column(db.String(10), default='user')  # ⬅️ يفصل بين الأدمن والمستخدم
+    role = db.Column(db.String(10), default='user')
 
 # 📝 نموذج البلاغ
 class Report(db.Model):
@@ -23,8 +23,8 @@ class Report(db.Model):
     category = db.Column(db.String(50))
     description = db.Column(db.Text)
     link = db.Column(db.String(250))
-    report_type = db.Column(db.String(10), default='private')  # ⬅️ عام أو خاص
-    approved = db.Column(db.String(10), default='pending')     # ⬅️ الحالة
+    report_type = db.Column(db.String(10), default='private')
+    approved = db.Column(db.String(10), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # 🏠 الصفحة الترحيبية
@@ -32,7 +32,7 @@ class Report(db.Model):
 def welcome():
     return render_template('welcome.html')
 
-# 👤 تسجيل الدخول
+# 🔐 تسجيل الدخول
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -60,7 +60,7 @@ def register():
         )
         db.session.add(new_user)
         db.session.commit()
-        return render_template('login.html', registered=True)
+        return redirect('/login')
     return render_template('register.html')
 
 # 📤 رفع بلاغ
@@ -72,7 +72,6 @@ def submit_report():
         last = Report.query.filter_by(username=session['user']).order_by(Report.created_at.desc()).first()
         if last and (datetime.utcnow() - last.created_at).seconds < 30:
             return render_template('submit_report.html', wait=True)
-
         report = Report(
             username=session['user'],
             category=request.form['category'],
@@ -84,36 +83,6 @@ def submit_report():
         db.session.commit()
         return render_template('submit_report.html', success=True)
     return render_template('submit_report.html')
-
-# 🧾 الملف الشخصي
-@app.route('/profile')
-def profile():
-    if 'user' not in session:
-        return redirect('/login')
-    u = User.query.filter_by(username=session['user']).first()
-    reports = Report.query.filter_by(username=session['user']).all()
-    approved = len([r for r in reports if r.approved == 'approved'])
-    level = (
-        'خبير 🔥' if approved >= 50 else
-        'نشط 💪' if approved >= 20 else
-        'مشارك 🤝' if approved >= 5 else
-        'جديد 🐣'
-    )
-    return render_template('profile.html', user=u, reports=len(reports), level=level)
-
-# ⚙️ إعدادات المستخدم
-@app.route('/settings', methods=['GET', 'POST'])
-def settings():
-    if 'user' not in session:
-        return redirect('/login')
-    u = User.query.filter_by(username=session['user']).first()
-    if request.method == 'POST':
-        u.phone = request.form['phone']
-        if request.form['password']:
-            u.password = request.form['password']
-        db.session.commit()
-        return render_template('settings.html', updated=True)
-    return render_template('settings.html')
 
 # 🧍‍♂️ لوحة المستخدم
 @app.route('/dashboard')
@@ -143,7 +112,37 @@ def admin_dashboard():
     reports = q.order_by(Report.created_at.desc()).all()
     return render_template('admin_dashboard.html', reports=reports)
 
-# ✔️ قبول بلاغ
+# ⚙️ إعدادات المستخدم
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    if 'user' not in session:
+        return redirect('/login')
+    u = User.query.filter_by(username=session['user']).first()
+    if request.method == 'POST':
+        u.phone = request.form['phone']
+        if request.form['password']:
+            u.password = request.form['password']
+        db.session.commit()
+        return render_template('settings.html', updated=True)
+    return render_template('settings.html')
+
+# 👤 الملف الشخصي
+@app.route('/profile')
+def profile():
+    if 'user' not in session:
+        return redirect('/login')
+    u = User.query.filter_by(username=session['user']).first()
+    reports = Report.query.filter_by(username=session['user']).all()
+    approved = len([r for r in reports if r.approved == 'approved'])
+    level = (
+        'خبير 🔥' if approved >= 50 else
+        'نشط 💪' if approved >= 20 else
+        'مشارك 🤝' if approved >= 5 else
+        'جديد 🐣'
+    )
+    return render_template('profile.html', user=u, reports=len(reports), level=level)
+
+# 🗑️ إدارة البلاغات للأدمن
 @app.route('/accept/<int:id>')
 def accept(id):
     if session.get('role') != 'admin':
@@ -153,7 +152,6 @@ def accept(id):
     db.session.commit()
     return redirect('/admin_dashboard')
 
-# ❌ رفض بلاغ
 @app.route('/reject/<int:id>')
 def reject(id):
     if session.get('role') != 'admin':
@@ -163,7 +161,6 @@ def reject(id):
     db.session.commit()
     return redirect('/admin_dashboard')
 
-# 🗑️ حذف بلاغ
 @app.route('/delete/<int:id>')
 def delete(id):
     if session.get('role') != 'admin':
@@ -188,7 +185,7 @@ def logout():
     session.clear()
     return redirect('/')
 
-# 🚀 بدء السيرفر
+# 🚀 بدء السيرفر (متوافق مع Render)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
