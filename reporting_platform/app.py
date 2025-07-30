@@ -25,6 +25,8 @@ class Report(db.Model):
     link = db.Column(db.String(250))
     report_type = db.Column(db.String(20), default='private')
     approved = db.Column(db.String(20), default='pending')
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # 🏠 الصفحة الترحيبية
@@ -69,17 +71,6 @@ def logout():
     session.clear()
     return redirect('/')
 
-# 📋 استكشاف البلاغات المقبولة
-@app.route('/explore')
-def explore():
-    posts_removed = 5050
-    pages_removed = 1500
-    reports = Report.query.filter_by(approved='approved').all()
-    return render_template('reports_feed.html',
-                           reports=reports,
-                           removed_posts=posts_removed,
-                           removed_pages=pages_removed)
-
 # 📤 رفع بلاغ جديد
 @app.route('/submit_report', methods=['GET', 'POST'])
 def submit_report():
@@ -91,7 +82,9 @@ def submit_report():
             category=request.form['category'],
             description=request.form['description'],
             link=request.form['link'],
-            report_type=request.form['report_type']
+            report_type=request.form['report_type'],
+            latitude=request.form.get('latitude'),
+            longitude=request.form.get('longitude')
         )
         db.session.add(r)
         db.session.commit()
@@ -153,7 +146,7 @@ def admin_dashboard():
                            pending=pending_reports,
                            stats=stats)
 
-# ✅ قبول بلاغ
+# ✅ قبول البلاغ
 @app.route('/approve/<int:id>')
 def approve(id):
     r = Report.query.get(id)
@@ -177,7 +170,24 @@ def delete(id):
     db.session.commit()
     return redirect('/admin_dashboard')
 
-# 🚀 تشغيل السيرفر عالمياً
+# 🌍 خريطة التنبيهات
+@app.route('/alerts_map')
+def alerts_map():
+    reports = Report.query.filter(Report.latitude != None, Report.longitude != None).all()
+    return render_template('alerts_map.html', reports=reports)
+
+# 🗃️ استكشاف البلاغات المقبولة
+@app.route('/explore')
+def explore():
+    posts_removed = 5050
+    pages_removed = 1500
+    reports = Report.query.filter_by(approved='approved').all()
+    return render_template('reports_feed.html',
+                           reports=reports,
+                           removed_posts=posts_removed,
+                           removed_pages=pages_removed)
+
+# 🚀 تشغيل السيرفر عالمياً (جاهز لـ Render)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
