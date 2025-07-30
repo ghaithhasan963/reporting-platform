@@ -1,12 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
+import time
+from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import time
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///savenet.db'
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+
+# Render يستخدم DATABASE_URL تلقائيًا في البيئة
+db_uri = os.environ.get("DATABASE_URL", "sqlite:///savenet.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # --- نماذج البيانات ---
@@ -26,7 +31,11 @@ class Report(db.Model):
 
 last_report_time = time.time()
 
-# صفحة الهبوط العامة
+# إنشاء الجداول عند بدء التشغيل
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 @app.route('/')
 def home():
     if 'user_id' in session:
@@ -35,16 +44,14 @@ def home():
     reports = Report.query.all()
     return render_template('home.html', user_count=user_count, reports=reports)
 
-# الصفحة الرئيسية للمستخدم بعد تسجيل الدخول
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect('/')
     user = User.query.get(session['user_id'])
     reports = Report.query.order_by(Report.id.desc()).all()
-    return render_template("dashboard.html", reports=reports, user=user)
+    return render_template('dashboard.html', reports=reports, user=user)
 
-# صفحة إرسال بلاغ جديد
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if 'user_id' not in session:
@@ -63,7 +70,6 @@ def report():
         return redirect('/dashboard')
     return render_template('report.html')
 
-# تسجيل مستخدم جديد
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -79,7 +85,6 @@ def register():
         return redirect('/login')
     return render_template('register.html')
 
-# تسجيل الدخول
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -91,13 +96,11 @@ def login():
         return render_template('login.html', error='بيانات الدخول غير صحيحة')
     return render_template('login.html')
 
-# تسجيل الخروج
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
-# لوحة تحكم المشرف
 @app.route('/admin')
 def admin():
     if 'user_id' not in session or session.get('role') != 'مشرف':
@@ -132,9 +135,6 @@ def check_new_reports():
     is_new = (time.time() - last_report_time) < 35
     return jsonify({"new_reports": is_new})
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
+# تشغيل التطبيق
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
