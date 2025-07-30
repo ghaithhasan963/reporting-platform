@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}تفاصيل البلاغ | SaveNet{% endblock %}
+{% block content %}
+
+<h2 class="text-3xl font-bold mb-6 text-center text-indigo-700">📋 تفاصيل البلاغ</h2>
+
+<div class="max-w-xl mx-auto bg-white shadow-md p-6 rounded-lg border-l-4 border-red-500">
+  <h3 class="text-2xl font-bold text-red-700">{{ report.category }}</h3>
+  <p class="text-sm text-gray-600 mb-4">🕒 {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+  <div class="mb-4">
+    <span class="font-semibold text-gray-700">المبلغ:</span>
+    {{ report.user.username }}
+  </div>
+
+  <div class="mb-4">
+    <span class="font-semibold text-gray-700">الحالة:</span>
+    <span class="text-lg font-bold {% if report.approved == 'approved' %}text-green-600{% elif report.approved == 'rejected' %}text-red-600{% else %}text-yellow-600{% endif %}">
+      {{ report.approved }}
+    </span>
+  </div>
+
+  <div class="mb-4">
+    <span class="font-semibold text-gray-700">📍 الموقع:</span>
+    {{ report.location }}
+  </div>
+
+  <div class="mb-4">
+    <span class="font-semibold text-gray-700">📄 الوصف:</span>
+    <p class="mt-2 text-gray-800">{{ report.description }}</p>
+  </div>
+
+  {% if report.image_url %}
+  <div class="mt-6">
+    <img src="{{ report.image_url }}" alt="صورة البلاغ" class="w-full rounded">
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
