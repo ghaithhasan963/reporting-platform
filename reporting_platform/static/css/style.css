@@ -6,3 +6,9 @@
 .level-novice { background-color: #ccc; color: #333; }
 .level-active { background-color: #4caf50; color: white; }
 .level-expert { background-color: #ff5722; color: white; }
+.report-card[data-rating] {
+    border-left: 5px solid #2196f3;
+}
+.report-card[data-rating="high"] {
+    border-left-color: #f44336;
+}
