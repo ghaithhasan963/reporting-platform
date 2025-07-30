@@ -8,6 +8,8 @@ from activity import record_action
 from alerts import is_nearby
 from comments import add_comment, get_comments
 from rating import rate_report
+print("🧭 Current dir:", os.getcwd())
+print("📂 Contents:", os.listdir())
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.environ.get("SECRET_KEY", "savenet_secret")
