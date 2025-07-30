@@ -128,6 +128,14 @@ def delete_user():
 def check_new_reports():
     is_new = (time.time() - last_report_time) < 35
     return jsonify({"new_reports": is_new})
+@app.route('/about')
+def about(): return render_template('about.html')
+
+@app.route('/privacy')
+def privacy(): return render_template('privacy.html')
+
+@app.route('/terms')
+def terms(): return render_template('terms.html')
 
 # 🚨 تهيئة قاعدة البيانات (بديل before_first_request)
 with app.app_context():
