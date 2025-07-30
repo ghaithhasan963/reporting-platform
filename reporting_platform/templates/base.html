@@ -2,54 +2,77 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}منصة SaveNet{% endblock %}</title>
-
-  <!-- ✅ Tailwind & DaisyUI لتصميم خيالي -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.6.0/dist/full.css" rel="stylesheet" />
-
-  <!-- ✅ SweetAlert للإشعارات -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- ✅ Animate.css للحركات -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <title>🛡️ SaveNet</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      background: linear-gradient(to bottom right, #eeeeee, #f9f9f9);
+    }
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.5em;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    nav {
+      background-color: #333;
+      color: white;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #ffc107;
+    }
+    main {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+      background-color: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #4caf50;
+      color: white;
+      margin-top: 60px;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+<body>
 
-  <!-- ✅ شريط التنقل -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-indigo-700 animate__animated animate__fadeInDown">🛡️ SaveNet</h1>
-    <nav class="space-x-4 text-sm">
-      <a href="{{ url_for('welcome') }}" class="btn btn-link">الرئيسية</a>
-      <a href="{{ url_for('explore') }}" class="btn btn-link">البلاغات العامة</a>
-      {% if session.get('role') == 'user' %}
-        <a href="{{ url_for('submit_report') }}" class="btn btn-link">رفع بلاغ</a>
-        <a href="{{ url_for('profile') }}" class="btn btn-link">ملفي</a>
-        {% if user.is_admin %}
-  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-link">لوحة الإدارة</a>
-{% else %}
-  <a href="{{ url_for('user_dashboard') }}" class="btn btn-link">لوحة المستخدم</a>
-{% endif %}
-        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">خروج</a>
-      {% elif session.get('role') == 'admin' %}
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-link text-blue-800">لوحة الأدمن</a>
-        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">خروج</a>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="btn btn-link">دخول</a>
-        <a href="{{ url_for('register') }}" class="btn btn-link">تسجيل</a>
-      {% endif %}
-    </nav>
-  </header>
+  <header>🛡️ منصة SaveNet لحماية المجتمع</header>
+  <nav>
+    <a href="/">الرئيسية</a>
+    <a href="/explore">البلاغات العامة</a>
+    <a href="/submit_report">رفع بلاغ</a>
+    <a href="/analytics">التحليلات</a>
+    <a href="/alerts_map">الخريطة الحرارية</a>
+    <a href="/profile">ملفي</a>
+    <a href="/logout">خروج</a>
+  </nav>
 
-  <!-- ✅ جسم الصفحة -->
-  <main class="container mx-auto p-6 flex-grow animate__animated animate__fadeInUp">
+  <main>
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ✅ تذييل -->
-  <footer class="bg-white text-center p-4 shadow-md mt-auto">
-    <p>جميع الحقوق محفوظة © {{ current_year if current_year else 2025 }} | منصة SaveNet • غيث حسن</p>
+  <footer>
+    جميع الحقوق محفوظة &copy; 2025 | SaveNet • بواسطة غيث حسن
   </footer>
 
 </body>
