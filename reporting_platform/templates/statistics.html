@@ -1,53 +1,12 @@
-{% extends 'base.html' %}
-{% block title %}الإحصائيات | SaveNet{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-
-<div class="max-w-6xl mx-auto p-6 animate__animated animate__fadeIn">
-  <h2 class="text-3xl font-bold text-center text-indigo-900 mb-8">📊 إحصائيات نظام SaveNet</h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-      <h3 class="text-lg font-semibold text-gray-700">📄 مجموع البلاغات</h3>
-      <p class="text-2xl text-indigo-600 font-bold">{{ reports | length }}</p>
-    </div>
-    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-      <h3 class="text-lg font-semibold text-gray-700">✅ مقبولة</h3>
-      <p class="text-2xl text-green-500 font-bold">{{ reports | selectattr('approved', 'equalto', 'approved') | list | length }}</p>
-    </div>
-    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-      <h3 class="text-lg font-semibold text-gray-700">❌ مرفوضة</h3>
-      <p class="text-2xl text-red-500 font-bold">{{ reports | selectattr('approved', 'equalto', 'rejected') | list | length }}</p>
-    </div>
-  </div>
-
-  <div class="mt-10">
-    <h3 class="text-xl font-bold text-center text-indigo-700 mb-4">🧭 توزيع البلاغات حسب التصنيف</h3>
-    <canvas id="reportsChart" height="120"></canvas>
-  </div>
+<h2 class="text-center">📊 لوحة الإحصائيات</h2>
+<div class="stats-box">
+  <p>✅ بلاغات مقبولة: {{ approved_count }}</p>
+  <p>⏳ بلاغات معلقة: {{ pending_count }}</p>
+  <p>❌ بلاغات مرفوضة: {{ rejected_count }}</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const ctx = document.getElementById('reportsChart');
-  const chartData = {
-    labels: [{% for category in categories %}'{{ category }}',{% endfor %}],
-    datasets: [{
-      label: 'عدد البلاغات',
-      data: [{% for category in categories %}{{ reports | selectattr('category', 'equalto', category) | list | length }},{% endfor %}],
-      backgroundColor: ['#4f46e5', '#16a34a', '#dc2626', '#facc15', '#0ea5e9'],
-    }]
-  };
-  new Chart(ctx, {
-    type: 'bar',
-    data: chartData,
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'إحصائيات حسب التصنيف', color: '#1e40af' }
-      }
-    }
-  });
-</script>
-
+<a href="/export_excel" class="btn btn-outline-success">📥 تصدير إلى Excel</a>
+<a href="/export_pdf" class="btn btn-outline-danger">🧾 تصدير إلى PDF</a>
 {% endblock %}
