@@ -1,52 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}ملفي الشخصي | SaveNet{% endblock %}
+{% block title %}إنشاء حساب | SaveNet{% endblock %}
 {% block content %}
 
-<h2 class="text-3xl font-bold mb-4 text-center text-indigo-700">👤 ملف المستخدم</h2>
+<div class="max-w-md mx-auto mt-16 bg-white p-6 rounded-2xl shadow-md animate__animated animate__fadeInUp">
+  <h2 class="text-3xl font-bold text-center text-pink-600 mb-6">📝 إنشاء حساب جديد</h2>
 
-<div class="card bg-white shadow-md p-6 max-w-xl mx-auto">
-  <div class="flex items-center space-x-4 justify-center">
-    <div class="avatar">
-      <div class="w-24 rounded-full ring ring-indigo-500 ring-offset-base-100 ring-offset-2">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ user.username }}" alt="صورة رمزية">
-      </div>
+  {% if error %}
+    <script>
+      Swal.fire('❌ خطأ!', '{{ error }}', 'error');
+    </script>
+  {% endif %}
+
+  <form method="POST" class="space-y-4">
+    <input type="text" name="username" placeholder="📛 اسم المستخدم" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-purple-300">
+    <input type="password" name="password" placeholder="🔑 كلمة المرور" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-indigo-300">
+    <input type="password" name="confirm_password" placeholder="🔁 تأكيد كلمة المرور" required class="w-full border rounded px-3 py-2 focus:ring focus:ring-pink-400">
+
+    <div class="text-center mt-6">
+      <button type="submit" class="bg-pink-600 text-white px-5 py-2 rounded-lg hover:bg-pink-700 transition transform hover:scale-105">
+        ✨ تسجيل
+      </button>
     </div>
-    <div class="text-right">
-      <h3 class="text-xl font-semibold">{{ user.username }}</h3>
-      <p class="text-sm text-gray-600">{{ user.phone }}</p>
-    </div>
-  </div>
-
-  <hr class="my-4">
-
-  <div class="grid grid-cols-2 gap-4 text-center">
-    <div>
-      <h4 class="text-lg font-bold text-green-700">عدد البلاغات</h4>
-      <p class="text-xl">{{ reports | length }}</p>
-    </div>
-    <div>
-      <h4 class="text-lg font-bold text-blue-700">البلاغات المقبولة</h4>
-      <p class="text-xl">{{ reports | selectattr('approved', 'equalto', 'approved') | list | length }}</p>
-    </div>
-  </div>
-
-  <div class="mt-6 text-center">
-    <p class="text-sm">🔰 رتبتك في المنصة:</p>
-    <span class="text-2xl font-bold text-purple-700">{{ level }}</span>
-  </div>
-
-  <div class="mt-6">
-    <h4 class="font-bold text-lg mb-2">📄 سجل البلاغات</h4>
-    <ul class="space-y-2">
-      {% for r in reports %}
-        <li class="border p-2 rounded bg-gray-50">
-          <strong>{{ r.category }}</strong> — {{ r.approved }} | {{ r.created_at.strftime('%Y-%m-%d') }}
-        </li>
-      {% else %}
-        <li>لا يوجد بلاغات حالياً.</li>
-      {% endfor %}
-    </ul>
-  </div>
+  </form>
 </div>
 
 {% endblock %}
