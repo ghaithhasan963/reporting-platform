@@ -3,20 +3,20 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = os.environ.get("SECRET_KEY", "savenet_secret")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 db = SQLAlchemy(app)
 
-# 👤 المستخدم
+# 🧑 نموذج المستخدم
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50))
+    username = db.Column(db.String(50), unique=True)
     phone = db.Column(db.String(20))
-    password = db.Column(db.String(50))
-    role = db.Column(db.String(10), default='user')
+    password = db.Column(db.String(100))
+    role = db.Column(db.String(20), default='user')
 
-# 📝 البلاغ
+# 📣 نموذج البلاغ
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
@@ -30,13 +30,24 @@ class Report(db.Model):
 # 🏠 الصفحة الترحيبية
 @app.route('/')
 def welcome():
+    if 'user' in session:
+        return redirect('/explore')
     return render_template('welcome.html')
 
-# 📊 الصفحة العامة للبلاغات
-@app.route('/explore')
-def explore():
-    published = Report.query.filter_by(approved='approved').all()
-    return render_template('explore.html', reports=published)
+# 📝 تسجيل حساب جديد
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        u = request.form['username']
+        if User.query.filter_by(username=u).first():
+            return render_template('register.html', error="الاسم مستخدم مسبقاً.")
+        new_user = User(username=u,
+                        phone=request.form['phone'],
+                        password=request.form['password'])
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect('/login')
+    return render_template('register.html')
 
 # 🔐 تسجيل الدخول
 @app.route('/login', methods=['GET', 'POST'])
@@ -46,28 +57,34 @@ def login():
         p = request.form['password']
         user = User.query.filter_by(username=u, password=p).first()
         if user:
-            session['user'] = u
+            session['user'] = user.username
             session['role'] = user.role
-            return redirect('/admin_dashboard' if user.role == 'admin' else '/dashboard')
+            return redirect('/dashboard') if user.role == 'user' else redirect('/admin_dashboard')
         return render_template('login.html', error=True)
     return render_template('login.html')
 
-# 📝 التسجيل
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        if request.form['password'] != request.form.get('confirm'):
-            return render_template('register.html', mismatch=True)
-        user = User(username=request.form['username'], phone=request.form['phone'], password=request.form['password'])
-        db.session.add(user)
-        db.session.commit()
-        return redirect('/login')
-    return render_template('register.html')
+# 🔓 تسجيل الخروج
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 
-# 📤 رفع البلاغ
+# 📋 استكشاف البلاغات المقبولة
+@app.route('/explore')
+def explore():
+    posts_removed = 5050
+    pages_removed = 1500
+    reports = Report.query.filter_by(approved='approved').all()
+    return render_template('reports_feed.html',
+                           reports=reports,
+                           removed_posts=posts_removed,
+                           removed_pages=pages_removed)
+
+# 📤 رفع بلاغ جديد
 @app.route('/submit_report', methods=['GET', 'POST'])
 def submit_report():
-    if 'user' not in session: return redirect('/login')
+    if 'user' not in session:
+        return redirect('/login')
     if request.method == 'POST':
         r = Report(
             username=session['user'],
@@ -84,50 +101,61 @@ def submit_report():
 # 👤 الملف الشخصي
 @app.route('/profile')
 def profile():
-    if 'user' not in session: return redirect('/login')
-    user = User.query.filter_by(username=session['user']).first()
+    if 'user' not in session:
+        return redirect('/login')
+    u = User.query.filter_by(username=session['user']).first()
+    reports = Report.query.filter_by(username=u.username).all()
+    approved_reports = [r for r in reports if r.approved == 'approved']
+    level = ('خبير 🔥' if len(approved_reports) >= 50 else
+             'نشط 💪' if len(approved_reports) >= 20 else
+             'مشارك 🤝' if len(approved_reports) >= 5 else
+             'جديد 🐣')
+    return render_template('profile.html',
+                           user=u,
+                           reports=reports,
+                           level=level)
+
+# 📊 لوحة المستخدم
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session or session.get('role') != 'user':
+        return redirect('/login')
     reports = Report.query.filter_by(username=session['user']).all()
-    approved = len([r for r in reports if r.approved == 'approved'])
-    level = (
-        'خبير 🔥' if approved >= 50 else
-        'نشط 💪' if approved >= 20 else
-        'مشارك 🤝' if approved >= 5 else
-        'جديد 🐣'
-    )
-    return render_template('profile.html', user=user, reports=reports, level=level)
+    return render_template('dashboard.html', reports=reports)
 
 # 🛡️ لوحة الأدمن
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    if 'user' not in session or session.get('role') != 'admin': return redirect('/login')
+    if 'user' not in session or session.get('role') != 'admin':
+        return redirect('/login')
     users = User.query.all()
-    pending = Report.query.filter_by(approved='pending').all()
-    frequent = db.session.query(
-        Report.category, db.func.count(Report.category)
-    ).group_by(Report.category).having(db.func.count(Report.category) > 20).all()
-    user_data = []
-    for user in users:
-        count = Report.query.filter_by(username=user.username).count()
-        accepted = Report.query.filter_by(username=user.username, approved='approved').count()
-        level = (
-            'خبير 🔥' if accepted >= 50 else
-            'نشط 💪' if accepted >= 20 else
-            'مشارك 🤝' if accepted >= 5 else
-            'جديد 🐣'
-        )
-        user_data.append({
-            'username': user.username,
-            'phone': user.phone,
-            'role': user.role,
-            'reports': count,
-            'approved': accepted,
+    pending_reports = Report.query.filter_by(approved='pending').all()
+    stats = db.session.query(Report.category, db.func.count(Report.category))\
+                      .group_by(Report.category).all()
+    user_summary = []
+    for u in users:
+        total = Report.query.filter_by(username=u.username).count()
+        approved = Report.query.filter_by(username=u.username, approved='approved').count()
+        level = ('خبير 🔥' if approved >= 50 else
+                 'نشط 💪' if approved >= 20 else
+                 'مشارك 🤝' if approved >= 5 else
+                 'جديد 🐣')
+        user_summary.append({
+            'username': u.username,
+            'phone': u.phone,
+            'role': u.role,
+            'reports': total,
+            'approved': approved,
             'level': level
         })
-    return render_template('admin_dashboard.html', users=user_data, pending=pending, frequent=frequent)
+    return render_template('admin_dashboard.html',
+                           users=user_summary,
+                           pending=pending_reports,
+                           stats=stats)
 
 # ✅ قبول بلاغ
-@app.route('/accept/<int:id>')
-def accept(id):
+@app.route('/approve/<int:id>')
+def approve(id):
     r = Report.query.get(id)
     r.approved = 'approved'
     db.session.commit()
@@ -149,15 +177,9 @@ def delete(id):
     db.session.commit()
     return redirect('/admin_dashboard')
 
-# 🚪 تسجيل خروج
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
-
-# 🚀 بدء التشغيل
+# 🚀 تشغيل السيرفر عالمياً
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
