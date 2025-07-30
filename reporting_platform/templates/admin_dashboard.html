@@ -1,33 +1,71 @@
 {% extends 'base.html' %}
+{% block title %}لوحة الأدمن | SaveNet{% endblock %}
 {% block content %}
-<div class="max-w-6xl mx-auto mt-8">
-  <h2 class="text-2xl font-bold mb-4">لوحة مراجعة البلاغات</h2>
-  <form method="GET" class="mb-4 flex gap-4">
-    <select name="status" class="select select-bordered"><option value="">كل الحالات</option><option value="pending">قيد المراجعة</option><option value="approved">مقبول</option><option value="rejected">مرفوض</option></select>
-    <select name="type" class="select select-bordered"><option value="">كل الأنواع</option><option value="public">عام</option><option value="private">خاص</option></select>
-    <button type="submit" class="btn btn-outline">تصفية</button>
-  </form>
-  <table class="table w-full bg-white rounded shadow">
-    <thead>
-      <tr><th>المستخدم</th><th>النوع</th><th>الوصف</th><th>الرابط</th><th>الحالة</th><th>تاريخ</th><th>إجراء</th></tr>
-    </thead>
-    <tbody>
-      {% for r in reports %}
-      <tr>
-        <td>{{ r.username }}</td>
-        <td>{{ r.report_type }}</td>
-        <td>{{ r.category }}</td>
-        <td><a href="{{ r.link }}" class="link">{{ r.link[:30] }}...</a></td>
-        <td>{{ r.approved }}</td>
-        <td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-        <td>
-          <a href="/accept/{{ r.id }}" class="btn btn-success btn-sm">✔️</a>
-          <a href="/reject/{{ r.id }}" class="btn btn-error btn-sm">✖️</a>
-          <a href="/delete/{{ r.id }}" class="btn btn-ghost btn-sm">🗑️</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<h2 class="text-3xl font-bold mb-6 text-center text-blue-800">🛡️ لوحة التحكم الإدارية</h2>
+
+<!-- 🔔 إشعارات وإحصائيات -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+  <!-- 🔍 بلاغات قيد المراجعة -->
+  <div class="card shadow p-4 bg-white">
+    <h3 class="text-xl font-semibold text-green-700">بلاغات قيد المراجعة</h3>
+    {% for r in pending %}
+      <div class="mt-4 border p-3 rounded-md">
+        <p><strong>{{ r.username }}</strong> أبلغ عن: {{ r.category }}</p>
+        <p>{{ r.description }}</p>
+        <div class="mt-2 space-x-2">
+          <a href="/accept/{{ r.id }}" class="btn btn-success">✔️ موافقة</a>
+          <a href="/reject/{{ r.id }}" class="btn btn-error">❌ رفض</a>
+        </div>
+      </div>
+    {% else %}
+      <p>لا يوجد بلاغات بانتظار المراجعة.</p>
+    {% endfor %}
+  </div>
+
+  <!-- 🔁 البلاغات المكررة -->
+  <div class="card shadow p-4 bg-white">
+    <h3 class="text-xl font-semibold text-yellow-700">بلاغات مكررة (أكثر من 20)</h3>
+    {% for cat, count in frequent %}
+      <div class="alert alert-warning mt-4">
+        التصنيف: <strong>{{ cat }}</strong> | عدد البلاغات: {{ count }}
+        <a href="#" class="btn btn-outline">🗑️ تم التحقق</a>
+      </div>
+    {% else %}
+      <p>لا توجد بلاغات مكررة حالياً.</p>
+    {% endfor %}
+  </div>
 </div>
+
+<!-- 👥 جدول المستخدمين -->
+<div class="card shadow p-4 bg-white">
+  <h3 class="text-xl font-semibold text-purple-700 mb-4">بيانات المستخدمين</h3>
+  <div class="overflow-x-auto">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th>الاسم</th>
+          <th>الهاتف</th>
+          <th>الدور</th>
+          <th>عدد البلاغات</th>
+          <th>المقبولة</th>
+          <th>الرتبة</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td>{{ u.phone }}</td>
+          <td>{{ u.role }}</td>
+          <td>{{ u.reports }}</td>
+          <td>{{ u.approved }}</td>
+          <td>{{ u.level }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 {% endblock %}
