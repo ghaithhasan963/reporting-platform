@@ -3,31 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}منصة البلاغات{% endblock %}</title>
+  <title>{% block title %}منصة SaveNet{% endblock %}</title>
 
-  <!-- ✅ تصميم Tailwind ودعم DaisyUI -->
+  <!-- ✅ Tailwind & DaisyUI لتصميم خيالي -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@3.6.0/dist/full.css" rel="stylesheet" />
 
-  <!-- ✅ إشعارات SweetAlert2 -->
+  <!-- ✅ SweetAlert للإشعارات -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- ✅ حركات انيميشن -->
+  <!-- ✅ Animate.css للحركات -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
-
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
-  <!-- ✅ رأس الصفحة -->
-  <header class="bg-white shadow p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">💡 منصة البلاغات</h1>
-    <nav class="space-x-4">
+  <!-- ✅ شريط التنقل -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-indigo-700 animate__animated animate__fadeInDown">🛡️ SaveNet</h1>
+    <nav class="space-x-4 text-sm">
       <a href="{{ url_for('welcome') }}" class="btn btn-link">الرئيسية</a>
-      <a href="{{ url_for('dashboard') }}" class="btn btn-link">لوحة التحكم</a>
-      <a href="{{ url_for('about') }}" class="btn btn-link">من نحن</a>
-      <a href="{{ url_for('policy') }}" class="btn btn-link">سياسة الاستخدام</a>
-      {% if 'user_id' in session %}
-        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">تسجيل الخروج</a>
+      <a href="{{ url_for('explore') }}" class="btn btn-link">البلاغات العامة</a>
+      {% if session.get('role') == 'user' %}
+        <a href="{{ url_for('submit_report') }}" class="btn btn-link">رفع بلاغ</a>
+        <a href="{{ url_for('profile') }}" class="btn btn-link">ملفي</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-link">لوحتي</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">خروج</a>
+      {% elif session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-link text-blue-800">لوحة الأدمن</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-link text-red-600">خروج</a>
       {% else %}
         <a href="{{ url_for('login') }}" class="btn btn-link">دخول</a>
         <a href="{{ url_for('register') }}" class="btn btn-link">تسجيل</a>
@@ -35,14 +38,15 @@
     </nav>
   </header>
 
-  <!-- ✅ محتوى القالب الفرعي -->
-  <main class="flex-grow container mx-auto p-6">
+  <!-- ✅ جسم الصفحة -->
+  <main class="container mx-auto p-6 flex-grow animate__animated animate__fadeInUp">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ✅ تذييل الصفحة -->
-  <footer class="bg-white shadow text-center p-4">
-    <p>جميع الحقوق محفوظة © {{ current_year if current_year else 2025 }} | تصميم غيث</p>
+  <!-- ✅ تذييل -->
+  <footer class="bg-white text-center p-4 shadow-md mt-auto">
+    <p>جميع الحقوق محفوظة © {{ current_year if current_year else 2025 }} | منصة SaveNet • غيث حسن</p>
   </footer>
+
 </body>
 </html>
